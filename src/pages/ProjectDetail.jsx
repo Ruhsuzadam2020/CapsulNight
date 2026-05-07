@@ -55,19 +55,16 @@ const uploadFile = async (e) => {
 
       if (uploadError) throw uploadError;
 
-      // 3. Dosyanın dışarıdan erişilebilir URL'ini al
       const { data: { publicUrl } } = supabase.storage
         .from('capsules')
         .getPublicUrl(filePath);
 
-      // 4. Veritabanına (files tablosuna) user_id ile birlikte kaydet
-      // Artık RLS politikası "user_id tutuyor" diyerek bu işleme izin verecek.
       const { error: dbError } = await supabase.from('files').insert([
         { 
           project_id: id, 
           name: file.name, 
           url: publicUrl,
-          user_id: user.id // RLS hatasını bitiren dokunuş!
+          user_id: user.id 
         }
       ]);
 
@@ -85,12 +82,10 @@ const uploadFile = async (e) => {
   const deleteFile = async (fileId, fileName) => {
     if(!window.confirm("Bu dosyayı silmek istediğine emin misin?")) return;
     
-    // Not: Gerçek projede storage'dan da silmek gerekir, şimdilik DB'den temizliyoruz
     await supabase.from('files').delete().eq('id', fileId);
     fetchAllData();
   };
 
-  // --- Diğer Fonksiyonlar (Aynı Kalıyor) ---
   const addTask = async (e) => {
     e.preventDefault();
     if (!taskText.trim()) return;

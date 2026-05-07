@@ -23,7 +23,7 @@ function App() {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Giriş yapılmamışsa Auth ekranını döndür
+
   if (!session) {
     return <Auth />;
   }
